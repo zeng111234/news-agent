@@ -1,21 +1,17 @@
-name: ? 每日国际新闻简报自动推送
+name: Daily Briefing
 
 on:
-  # 定时触发 - 每天早上 8:00 (北京时间 UTC+8)
   schedule:
-    - cron: '0 0 * * *'  # UTC 0:00 = 北京时间 8:00
-
-  # 允许手动触发
+    - cron: "0 0 * * *"
   workflow_dispatch:
-
-  # 推送到 main 分支时也触发（方便测试）
   push:
-    branches: [main]
+    branches:
+      - master
+      - main
     paths-ignore:
-      - '**.md'
-      - '.github/**'
+      - "**.md"
+      - ".github/**"
 
-# 环境变量
 env:
   DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
   DEEPSEEK_API_BASE: https://api.deepseek.com
@@ -25,35 +21,35 @@ env:
   SMTP_USER: ${{ secrets.SMTP_USER }}
   SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
   MAIL_TO: ${{ secrets.MAIL_TO }}
-  BRIEFING_TIME: 08:00
+  BRIEFING_TIME: "08:00"
   BRIEFING_TIMEZONE: Asia/Shanghai
 
 jobs:
   daily-briefing:
-    name: 生成并推送每日简报
+    name: Generate and push daily briefing
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: 1?? 检出代码
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 2?? 设置 Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-          cache: 'pip'
+          python-version: "3.10"
+          cache: pip
 
-      - name: 3?? 安装依赖
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 4?? 创建配置文件目录
+      - name: Create storage directories
         run: |
           mkdir -p storage/history
 
-      - name: 5?? 运行简报生成流程
+      - name: Run briefing pipeline
         run: |
           python main.py
         env:
@@ -62,7 +58,7 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
 
-      - name: 6?? 上传简报存档（可选）
+      - name: Upload briefing archive
         if: always()
         uses: actions/upload-artifact@v4
         with:
