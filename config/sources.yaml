@@ -1,0 +1,15 @@
+# 新闻抓取源配置
+# 格式: 名称: 抓取URL
+
+sources:
+  央视网国际新闻:
+    url: https://news.cctv.com/world
+    type: cctv
+    enabled: true
+
+  # 可在此添加更多抓取源
+  # 示例:
+  # 36氪:
+  #   url: https://36kr.com/newsflashes
+  #   type: general
+  #   enabled: true

@@ -1,0 +1,28 @@
+# 内容筛选规则配置
+# filter_rules: 包含/排除关键词，用于 AI 筛选
+# priority_keywords: 优先展示的关键词
+
+filter_rules:
+  # 排除规则 - 包含这些关键词的新闻将被过滤
+  exclude_keywords:
+    - 赞助
+    - 广告
+    - 推广
+    - 付费
+
+  # 包含规则 - 优先保留包含这些关键词的新闻
+  include_keywords: []
+
+# 优先展示的关键词
+priority_keywords:
+  - 国际
+  - 外交
+  - 经济
+  - 科技
+  - 贸易
+
+# 简报配置
+briefing:
+  max_articles: 10          # 每期简报最大文章数
+  summary_language: chinese # 摘要语言
+  include_source_link: true # 是否包含原文链接
