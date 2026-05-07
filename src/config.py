@@ -23,7 +23,11 @@ def load_yaml(file_path: Path) -> Dict[str, Any]:
 
 
 def load_env() -> Dict[str, str]:
-    """手动加载 .env 文件（不依赖 python-dotenv）"""
+    """加载环境变量配置
+    
+    优先级：系统环境变量 > .env 文件
+    兼容 GitHub Actions Secrets 注入机制（无 .env 文件时也能正常工作）。
+    """
     env_vars = {}
     env_file = ENV_FILE
 
@@ -38,9 +42,25 @@ def load_env() -> Dict[str, str]:
                 value = value.strip().strip('"').strip("'")
                 env_vars[key] = value
 
-    # 环境变量优先
-    for key in env_vars:
-        env_vars[key] = os.environ.get(key, env_vars[key])
+    # 预期读取的环境变量键名列表
+    expected_keys = [
+        "DEEPSEEK_API_KEY",
+        "DEEPSEEK_API_BASE",
+        "DEEPSEEK_MODEL",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SMTP_PASSWORD",
+        "MAIL_TO",
+        "BRIEFING_TIME",
+        "BRIEFING_TIMEZONE",
+    ]
+
+    # 系统环境变量优先（覆盖 .env 中的值）
+    for key in expected_keys:
+        env_value = os.environ.get(key)
+        if env_value is not None:
+            env_vars[key] = env_value
 
     return env_vars
 
